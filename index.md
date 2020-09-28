@@ -51,20 +51,58 @@ Y_test = test_frame['label']
 * * *
 ## 3. Naive Bayes Model
 Naive Bayes is a probabilistic classifier, meaning that for a document d, out of all classes C the classifier returns the class which has the maximum posterior probability given the document. We thus compute the most probable class given some document d by choosing the class which has the highest product of two probabilities: the prior probability of the class P(c) and the likelihood of the document P(d|c):
-![image](02.JPG)
+![image](02.JPG)  
 Without loss of generalization, we can represent a document d as a set of features f1,f2,...fn:
-![image](03.JPG)
+![image](03.JPG)  
 Naive Bayes is a classification technique based on Bayes’ Theorem with an assumption of independence among predictors. A Naive Bayes classifier assumes that the presence of a particular feature in a class is unrelated to the presence of any other feature. This is a very strong assumption that is most unlikely in real data, i.e. that the attributes do not interact:
-![image](04.JPG)
+![image](04.JPG)  
 The final equation for the class chosen by a naive Bayes classifier is thus:
-![image](05.JPG)
-To learn the probability P( fi|c), we’ll assume a feature is just the existence of a word in the document’s bag of words, and so we’ll want P(wi|c), which we compute as the fraction of times the word wi appears among all words in all documents of topic c.
-![image](06.JPG)
-But since naive Bayes naively multiplies all the feature likelihoods together, probabilities of zero will cause problems. So we use a technique called Laplace smoothing:
-![image](08.JPG)
-The Final algorithms is:
-![image](07.JPG)
+![image](05.JPG)  
 ### Training the Naive Bayes Model
-To learn the probability P( fijc), we’ll assume a feature is just the existence of a word in the document’s bag of words, and so we’ll want P(wijc), which we compute as the fraction of times the word wi appears among all words in all documents of topic c. We first concatenate all documents with category c into one big “category c” text. Then we use the frequency of wi in this concatenated document to give a maximum likelihood estimate of the probability:
+To learn the probability P( fi|c), we’ll assume a feature is just the existence of a word in the document’s bag of words, and so we’ll want P(wi|c), which we compute as the fraction of times the word wi appears among all words in all documents of topic c.
+![image](06.JPG)  
+But since naive Bayes naively multiplies all the feature likelihoods together, probabilities of zero will cause problems. So we use a technique called Laplace smoothing:
+![image](08.JPG)  
+The Final algorithms is:
+![image](09.JPG)  
+We program the loop in python as follows:
+```python
+for c in self.classes:
+   #num of docs in class c
+   docsInC=sum(Y==c)
+   #logPrior of the class c
+   self.logPrior[c]=math.log(docsInC/self.numOfDocs)
+   #calculate denominator (sum of all word counts)
+   self.total_count[c]=np.sum(self.bigdoc[c])
+   #loglikelihood array initillizer
+   self.loglikelihood[c]=np.zeros((self.numOfFeatures,))
+
+   #loop over all words in our vocab
+   for word in range(0,self.numOfFeatures):
+       if word in self.trainVocabIndex:
+           #count of this word in this class
+           wordcount=np.sum(self.bigdoc[c][:,word])
+           self.loglikelihood[c][word]=math.log((wordcount+1)/(self.total_count[c]+self.numOfVocabs))
+```
+### Class Prediction using Naive Bayes
+After training the model, we compute the most probable class for the test documents, by choosing the class which has the highest product of prior and likelihood for the given document.
+![image](10.JPG) 
+Naive Bayes prediction is coded as follows:
+```python
+for i in range(0,testnum):
+   sumC={}
+   for c in self.classes:
+       sumC[c]=self.logPrior[c]
+       for word in range(0,self.numOfFeatures):
+           if X[i,word]>0:
+               if word in self.trainVocabIndex:
+                   for j in range(0,int(X[i,word])):
+                       sumC[c]+=self.loglikelihood[c][word]
+
+   #return the class with the heighest sum
+   Keymax_array.append(max(sumC, key= lambda x: sumC[x])) 
+return Keymax_array
+```
 #### Credits
 This project is taken from Georgia Tech's NLP class, Fall 2020.
+Most of the Photos and explanations given for NB and LR models is taken from "Speech and Language Processing" written by Daniel Jurafsky.
