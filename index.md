@@ -1,3 +1,4 @@
+# Text Classification for Hate Speech
 Hate speech is a  
 (a) deliberate attack,  
 (b) directed towards a specific group of people,  
