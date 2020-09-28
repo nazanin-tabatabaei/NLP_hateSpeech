@@ -20,8 +20,8 @@ train_frame, test_frame = train_test_split(train_frame, test_size=0.2)
 * * *
 ## 2. Feature Engineering
 In this step, raw text data will be transformed into feature vectors and new features will be created using the existing dataset.  
-We represent a text document as if it were a bag-of-words, that is, an unordered set of words with their position ignored, keeping only their frequency in the document.
-![image](bag.JPG)
+We represent a text document as if it were a bag-of-words, that is, an unordered set of words with their position ignored, keeping only their frequency in the document.  
+![image](bag.JPG)  
 ### Text Tokenization
 First, we tokenize the text into tokens:
 ```python
@@ -50,20 +50,20 @@ Y_test = test_frame['label']
 ```
 * * *
 ## 3. Naive Bayes Model
-Naive Bayes is a probabilistic classifier, meaning that for a document d, out of all classes C the classifier returns the class which has the maximum posterior probability given the document. We thus compute the most probable class given some document d by choosing the class which has the highest product of two probabilities: the prior probability of the class P(c) and the likelihood of the document P(d|c):
+Naive Bayes is a probabilistic classifier, meaning that for a document d, out of all classes C the classifier returns the class which has the maximum posterior probability given the document. We thus compute the most probable class given some document d by choosing the class which has the highest product of two probabilities: the prior probability of the class P(c) and the likelihood of the document P(d|c):  
 ![image](02.JPG)  
-Without loss of generalization, we can represent a document d as a set of features f1,f2,...fn:
+Without loss of generalization, we can represent a document d as a set of features f1,f2,...fn:  
 ![image](03.JPG)  
-Naive Bayes is a classification technique based on Bayes’ Theorem with an assumption of independence among predictors. A Naive Bayes classifier assumes that the presence of a particular feature in a class is unrelated to the presence of any other feature. This is a very strong assumption that is most unlikely in real data, i.e. that the attributes do not interact:
+Naive Bayes is a classification technique based on Bayes’ Theorem with an assumption of independence among predictors. A Naive Bayes classifier assumes that the presence of a particular feature in a class is unrelated to the presence of any other feature. This is a very strong assumption that is most unlikely in real data, i.e. that the attributes do not interact:  
 ![image](04.JPG)  
-The final equation for the class chosen by a naive Bayes classifier is thus:
+The final equation for the class chosen by a naive Bayes classifier is thus:  
 ![image](05.JPG)  
 ### Training the Naive Bayes Model
-To learn the probability P( fi|c), we’ll assume a feature is just the existence of a word in the document’s bag of words, and so we’ll want P(wi|c), which we compute as the fraction of times the word wi appears among all words in all documents of topic c.
+To learn the probability P( fi|c), we’ll assume a feature is just the existence of a word in the document’s bag of words, and so we’ll want P(wi|c), which we compute as the fraction of times the word wi appears among all words in all documents of topic c.  
 ![image](06.JPG)  
-But since naive Bayes naively multiplies all the feature likelihoods together, probabilities of zero will cause problems. So we use a technique called Laplace smoothing:
+But since naive Bayes naively multiplies all the feature likelihoods together, probabilities of zero will cause problems. So we use a technique called Laplace smoothing:  
 ![image](08.JPG)  
-The Final algorithms is:
+The Final algorithms is:  
 ![image](09.JPG)  
 We program the loop in python as follows:
 ```python
@@ -85,7 +85,7 @@ for c in self.classes:
            self.loglikelihood[c][word]=math.log((wordcount+1)/(self.total_count[c]+self.numOfVocabs))
 ```
 ### Class Prediction using Naive Bayes
-After training the model, we compute the most probable class for the test documents, by choosing the class which has the highest product of prior and likelihood for the given document.
+After training the model, we compute the most probable class for the test documents, by choosing the class which has the highest product of prior and likelihood for the given document.  
 ![image](10.JPG) 
 Naive Bayes prediction is coded as follows:
 ```python
